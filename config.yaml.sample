@@ -1,0 +1,9 @@
+general:
+  auto_join_all_channel: false    #[true/false]
+  case_dir: cases/                #[directory path]
+
+mattermost:
+  api_url: localhost:8065         #[domain/ip:port]
+  username: claptrap@example.com  #[email]
+  password: hunter2               #[password]
+  team: nsf                       #[mattermost team name]
