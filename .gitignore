@@ -8,4 +8,5 @@
 # Ignore Config Directory, Build and Config File
 /config/
 claptrap
+cl4p-tp
 config.yaml
