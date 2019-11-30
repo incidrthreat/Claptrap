@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"github.com/DSchalla/Claptrap/provider"
 	"log"
+
+	"github.com/DSchalla/Claptrap/provider"
 )
 
+// Case ...
 type Case struct {
 	Name         string
 	Conditions   []Condition
@@ -108,7 +110,7 @@ func createConditionFromRawCondition(rawCond rawCondition) (Condition, error) {
 	case "random":
 		realCondition, err = NewRandomCondition(rawCond.Likeness)
 	default:
-		err = fmt.Errorf("Invalid Condition Type: %s\n", condType)
+		err = fmt.Errorf("Invalid Condition Type: %s", condType)
 	}
 
 	return realCondition, err
@@ -129,7 +131,7 @@ func createResponseFromRawResponse(rawResp rawResponse) (Response, error) {
 	case "delete_message":
 		realResponse, err = NewDeleteMessageResponse()
 	default:
-		err = fmt.Errorf("Invalid Response Type: %s\n", respType)
+		err = fmt.Errorf("Invalid Response Type: %s", respType)
 	}
 
 	return realResponse, err

@@ -1,9 +1,10 @@
 package rules_test
 
 import (
-	"github.com/DSchalla/Claptrap/rules"
 	"testing"
+
 	"github.com/DSchalla/Claptrap/provider"
+	"github.com/DSchalla/Claptrap/rules"
 )
 
 func TestEngine_EvaluateMessageEvent(t *testing.T) {

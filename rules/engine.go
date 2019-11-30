@@ -1,13 +1,14 @@
 package rules
 
 import (
-	"github.com/fsnotify/fsnotify"
 	"log"
 	"os"
 	"path"
-	"strings"
 	"path/filepath"
+	"strings"
+
 	"github.com/DSchalla/Claptrap/provider"
+	"github.com/fsnotify/fsnotify"
 )
 
 var caseTypes = []string{"message", "user_add", "user_remove"}
