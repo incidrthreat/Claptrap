@@ -1,24 +1,26 @@
 package provider
 
 import (
-	"github.com/mattermost/mattermost-server/model"
-	"os"
 	"log"
+	"os"
 	"strings"
+
+	"github.com/mattermost/mattermost-server/model"
 )
 
 type Mattermost struct {
-	client  *model.Client4
-	socket  *model.WebSocketClient
-	apiUrl  string
-	team    *model.Team
-	botUser *model.User
+	client    *model.Client4
+	socket    *model.WebSocketClient
+	apiUrl    string
+	team      *model.Team
+	botUser   *model.User
 	eventChan chan Event
 }
 
-func NewMattermost (apiUrl, username, password, team string) *Mattermost{
-	m := Mattermost{
-	}
+var unifiedEvent Event
+
+func NewMattermost(apiUrl, username, password, team string) *Mattermost {
+	m := Mattermost{}
 	m.apiUrl = apiUrl
 	m.client = model.NewAPIv4Client("http://" + apiUrl)
 	if user, resp := m.client.Login(username, password); resp.Error != nil {
@@ -34,7 +36,7 @@ func NewMattermost (apiUrl, username, password, team string) *Mattermost{
 
 func (m *Mattermost) Connect() bool {
 	var err *model.AppError
-	m.socket, err = model.NewWebSocketClient4("ws://" + m.apiUrl, m.client.AuthToken)
+	m.socket, err = model.NewWebSocketClient4("ws://"+m.apiUrl, m.client.AuthToken)
 	if err != nil {
 		log.Printf("[!] Error connecting to the Mattermost WS: %s\n", err.Message)
 		return false
@@ -50,13 +52,15 @@ func (m *Mattermost) Reconnect() bool {
 }
 
 func (m *Mattermost) ListenForEvents() {
-	var unifiedEvent Event
+
 	for msg := range m.socket.EventChannel {
-		unifiedEvent = Event{}
 		switch msg.Event {
-		case "posted": unifiedEvent = m.handleMessageEvent(msg)
-		case "user_removed": unifiedEvent = m.handleUserRemovedEvent(msg)
-		default: unifiedEvent = Event{}
+		case "posted":
+			unifiedEvent = m.handleMessageEvent(msg)
+		case "user_removed":
+			unifiedEvent = m.handleUserRemovedEvent(msg)
+		default:
+			unifiedEvent = Event{}
 		}
 
 		if unifiedEvent.UserID == m.botUser.Id {
@@ -69,16 +73,16 @@ func (m *Mattermost) ListenForEvents() {
 	}
 }
 
-func (m *Mattermost) handleMessageEvent(event *model.WebSocketEvent) Event{
+func (m *Mattermost) handleMessageEvent(event *model.WebSocketEvent) Event {
 
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-	if post.Type == "system_add_to_channel"{
+
+	if post.Type == "system_add_to_channel" {
 		return m.handleUserInviteEvent(event)
-	}else if post.Type == "system_join_channel" {
+	} else if post.Type == "system_join_channel" {
 		return m.handleUserJoinEvent(event)
 	}
 
-	unifiedEvent := Event{}
 	unifiedEvent.Type = "message"
 	unifiedEvent.UserName = event.Data["sender_name"].(string)
 	unifiedEvent.ChannelName = event.Data["channel_name"].(string)
@@ -88,12 +92,13 @@ func (m *Mattermost) handleMessageEvent(event *model.WebSocketEvent) Event{
 	unifiedEvent.Timestamp = post.CreateAt
 	unifiedEvent.Text = post.Message
 	unifiedEvent = m.addEventMetadata(unifiedEvent)
+
 	return unifiedEvent
 }
 
-func (m *Mattermost) handleUserInviteEvent(event *model.WebSocketEvent) Event{
+func (m *Mattermost) handleUserInviteEvent(event *model.WebSocketEvent) Event {
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-	unifiedEvent := Event{}
+
 	unifiedEvent.Type = "user_add"
 	unifiedEvent.PostID = post.Id
 	unifiedEvent.ChannelID = post.ChannelId
@@ -103,9 +108,9 @@ func (m *Mattermost) handleUserInviteEvent(event *model.WebSocketEvent) Event{
 	return unifiedEvent
 }
 
-func (m *Mattermost) handleUserJoinEvent(event *model.WebSocketEvent) Event{
+func (m *Mattermost) handleUserJoinEvent(event *model.WebSocketEvent) Event {
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-	unifiedEvent := Event{}
+	var unifiedEvent Event
 	unifiedEvent.Type = "user_add"
 	unifiedEvent.PostID = post.Id
 	unifiedEvent.ChannelID = post.ChannelId
@@ -114,8 +119,8 @@ func (m *Mattermost) handleUserJoinEvent(event *model.WebSocketEvent) Event{
 	return unifiedEvent
 }
 
-func (m *Mattermost) handleUserRemovedEvent(event *model.WebSocketEvent) Event{
-	unifiedEvent := Event{}
+func (m *Mattermost) handleUserRemovedEvent(event *model.WebSocketEvent) Event {
+	var unifiedEvent Event
 	unifiedEvent.Type = "user_remove"
 	unifiedEvent.UserID = event.Data["user_id"].(string)
 	unifiedEvent.ActorID = event.Data["remover_id"].(string)
@@ -125,11 +130,12 @@ func (m *Mattermost) handleUserRemovedEvent(event *model.WebSocketEvent) Event{
 }
 
 func (m *Mattermost) addEventMetadata(event Event) Event {
+
 	var user, actor *model.User
 	var channel *model.Channel
 	if event.UserName == "" && event.UserID != "" {
 		user, _ = m.client.GetUser(event.UserID, "")
-	} else  {
+	} else {
 		user, _ = m.client.GetUserByUsername(event.UserName, "")
 	}
 
@@ -153,8 +159,8 @@ func (m *Mattermost) addEventMetadata(event Event) Event {
 		event.ActorName = actor.Username
 		event.ActorRole = actor.Roles
 
-		member, _ = m.client.GetTeamMember(m.team.Id, actor.Id, "")
-		event.ActorRole += " " + member.Roles
+		//member, _ = m.client.GetTeamMember(m.team.Id, actor.Id, "")
+		//event.ActorRole += " " + member.Roles
 	}
 
 	if event.ChannelID != "" {
@@ -206,7 +212,7 @@ func (m *Mattermost) GetEmailByUsername(username string) string {
 func (m *Mattermost) MessagePublic(channelID, message string) bool {
 	post := &model.Post{
 		ChannelId: channelID,
-		Message: message,
+		Message:   message,
 	}
 	m.client.CreatePost(post)
 
@@ -214,7 +220,7 @@ func (m *Mattermost) MessagePublic(channelID, message string) bool {
 }
 
 func (m *Mattermost) MessageUser(userID, message string) bool {
-	channel,_ := m.client.CreateDirectChannel(userID, m.botUser.Id)
+	channel, _ := m.client.CreateDirectChannel(userID, m.botUser.Id)
 	m.MessagePublic(channel.Id, message)
 	return true
 }
