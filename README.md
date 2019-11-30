@@ -39,25 +39,15 @@ After downloading the release for your platform, place it in a directory and cre
 it (See [Configuration](#Configuration)). Afterwards you can start claptrap:
 
 ```
-./claptrap -config_file=config.yaml
+./claptrap --config_file=config.yaml
 ```
 
 The process does not fork and logs to stdout in the current version.
 
 ## Configuration
 
-The application is configured using a single YAML file with the following parameters:
-```
-general:
-  auto_join_all_channel: true [true/false]
-  case_dir: cases/ [directory path]
+The application is configured using a single `config.yaml` file.  Adjust all necessary options in `config.yaml.sample` for your mattermost instance.  
 
-mattermost:
-  api_url: localhost:5000 [domain/ip:port]
-  username: claptrap@example.com [email]
-  password: hunter2 [password]
-  team: nsf [mattermost team name]
-```
 
 There are various message types the bot can react on, currently implemented:
 
