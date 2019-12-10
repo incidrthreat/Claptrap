@@ -145,8 +145,8 @@ func (m *Mattermost) addEventMetadata(event Event) Event {
 		event.UserRole = user.Roles
 	}
 
-	member, _ := m.client.GetTeamMember(m.team.Id, user.Id, "")
-	event.UserRole += " " + member.Roles
+	//member, _ := m.client.GetTeamMember(m.team.Id, user.Id, "")
+	//event.UserRole += " " + member.Roles
 
 	if event.ActorName == "" && event.ActorID != "" {
 		actor, _ = m.client.GetUser(event.ActorID, "")
