@@ -3,8 +3,8 @@ package rules_test
 import (
 	"testing"
 
-	"github.com/DSchalla/Claptrap/provider"
-	"github.com/DSchalla/Claptrap/rules"
+	"github.com/incidrthreat/Claptrap/provider"
+	"github.com/incidrthreat/Claptrap/rules"
 )
 
 func TestTextContainsCondition(t *testing.T) {
