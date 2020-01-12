@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/DSchalla/Claptrap/provider"
+	"github.com/incidrthreat/Claptrap/provider"
 	"github.com/fsnotify/fsnotify"
 )
 
