@@ -209,6 +209,17 @@ func (m *Mattermost) GetEmailByUsername(username string) string {
 	return userInfo.Email
 }
 
+func (m *Mattermost) GetUserIDByUsername(username string) string {
+	userInfo, resp := m.client.GetUserByUsername(username, "")
+	log.Println("[+] eMail for Mattermost LookUp:", userInfo.Email)
+	if resp.Error != nil {
+		log.Println("[!] Unable to get UserInfo:", resp.Error)
+		return ""
+	}
+
+	return userInfo.Id
+}
+
 func (m *Mattermost) MessagePublic(channelID, message string) bool {
 	post := &model.Post{
 		ChannelId: channelID,
