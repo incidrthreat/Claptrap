@@ -1,9 +1,9 @@
 package claptrap
 
 import (
-	"github.com/DSchalla/Claptrap/rules"
+	"github.com/incidrthreat/Claptrap/rules"
 	"log"
-	"github.com/DSchalla/Claptrap/provider"
+	"github.com/incidrthreat/Claptrap/provider"
 )
 
 type BotServer struct {
