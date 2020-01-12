@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/DSchalla/Claptrap/provider"
+	"github.com/incidrthreat/Claptrap/provider"
 )
 
 type Condition interface {
