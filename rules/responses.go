@@ -3,7 +3,7 @@ package rules
 import (
 	"log"
 
-	"github.com/incidrthreat/Claptrap/provider"
+	"github.com/DSchalla/Claptrap/provider"
 )
 
 type Response interface {
