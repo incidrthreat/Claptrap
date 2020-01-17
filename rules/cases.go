@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/incidrthreat/Claptrap/provider"
+	"github.com/DSchalla/Claptrap/provider"
 )
 
 // Case ...
