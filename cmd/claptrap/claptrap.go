@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/incidrthreat/Claptrap/claptrap"
+	"github.com/DSchalla/Claptrap/claptrap"
 	"log"
 )
 
