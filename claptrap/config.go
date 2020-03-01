@@ -15,6 +15,7 @@ type Config struct {
 type GeneralConfig struct {
 	CaseDir    string `yaml:"case_dir"`
 	AutoJoinAllChannel bool `yaml:"auto_join_all_channel"`
+	Delay	int64 `yaml:"delay"`
 }
 
 type MattermostConfig struct {
