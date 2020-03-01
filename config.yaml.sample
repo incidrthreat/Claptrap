@@ -1,6 +1,7 @@
 general:
   auto_join_all_channel: false    #[true/false]
   case_dir: cases/                #[directory path]
+  delay: 60                       #[global time delay (seconds)]
 
 mattermost:
   api_url: localhost:8065         #[domain/ip:port]
