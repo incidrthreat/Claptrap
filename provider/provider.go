@@ -10,6 +10,7 @@ type Provider interface {
 
 	// Get Information
 	GetEmailByUsername(username string) string
+	GetUserIDByUsername(username string) string
 
 	// Actions
 	MessagePublic(channelID, message string) bool
