@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/incidrthreat/Claptrap/claptrap"
 	"log"
+
+	"github.com/incidrthreat/Claptrap/claptrap"
 )
 
 func main() {
