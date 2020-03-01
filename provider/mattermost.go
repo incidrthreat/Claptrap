@@ -17,8 +17,6 @@ type Mattermost struct {
 	eventChan chan Event
 }
 
-var unifiedEvent Event
-
 func NewMattermost(apiUrl, username, password, team string) *Mattermost {
 	m := Mattermost{}
 	m.apiUrl = apiUrl
@@ -52,8 +50,9 @@ func (m *Mattermost) Reconnect() bool {
 }
 
 func (m *Mattermost) ListenForEvents() {
-
+	var unifiedEvent Event
 	for msg := range m.socket.EventChannel {
+		unifiedEvent = Event{}
 		switch msg.Event {
 		case "posted":
 			unifiedEvent = m.handleMessageEvent(msg)
@@ -76,13 +75,13 @@ func (m *Mattermost) ListenForEvents() {
 func (m *Mattermost) handleMessageEvent(event *model.WebSocketEvent) Event {
 
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-
 	if post.Type == "system_add_to_channel" {
 		return m.handleUserInviteEvent(event)
 	} else if post.Type == "system_join_channel" {
 		return m.handleUserJoinEvent(event)
 	}
 
+	unifiedEvent := Event{}
 	unifiedEvent.Type = "message"
 	unifiedEvent.UserName = event.Data["sender_name"].(string)
 	unifiedEvent.ChannelName = event.Data["channel_name"].(string)
@@ -92,13 +91,12 @@ func (m *Mattermost) handleMessageEvent(event *model.WebSocketEvent) Event {
 	unifiedEvent.Timestamp = post.CreateAt
 	unifiedEvent.Text = post.Message
 	unifiedEvent = m.addEventMetadata(unifiedEvent)
-
 	return unifiedEvent
 }
 
 func (m *Mattermost) handleUserInviteEvent(event *model.WebSocketEvent) Event {
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-
+	unifiedEvent := Event{}
 	unifiedEvent.Type = "user_add"
 	unifiedEvent.PostID = post.Id
 	unifiedEvent.ChannelID = post.ChannelId
@@ -110,7 +108,7 @@ func (m *Mattermost) handleUserInviteEvent(event *model.WebSocketEvent) Event {
 
 func (m *Mattermost) handleUserJoinEvent(event *model.WebSocketEvent) Event {
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-	var unifiedEvent Event
+	unifiedEvent := Event{}
 	unifiedEvent.Type = "user_add"
 	unifiedEvent.PostID = post.Id
 	unifiedEvent.ChannelID = post.ChannelId
@@ -120,7 +118,7 @@ func (m *Mattermost) handleUserJoinEvent(event *model.WebSocketEvent) Event {
 }
 
 func (m *Mattermost) handleUserRemovedEvent(event *model.WebSocketEvent) Event {
-	var unifiedEvent Event
+	unifiedEvent := Event{}
 	unifiedEvent.Type = "user_remove"
 	unifiedEvent.UserID = event.Data["user_id"].(string)
 	unifiedEvent.ActorID = event.Data["remover_id"].(string)
@@ -130,7 +128,6 @@ func (m *Mattermost) handleUserRemovedEvent(event *model.WebSocketEvent) Event {
 }
 
 func (m *Mattermost) addEventMetadata(event Event) Event {
-
 	var user, actor *model.User
 	var channel *model.Channel
 	if event.UserName == "" && event.UserID != "" {
