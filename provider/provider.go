@@ -17,6 +17,7 @@ type Provider interface {
 	MessageUser(userID, message string) bool
 	InviteUser(userID, channelID string) bool
 	KickUser(userID, channelID string) bool
+	RevokeUserActiveSessions(userID string) bool
 	DeleteMessage(event Event) bool
 	ReplaceMessagePlaceholders(event Event, message string) string
 }
