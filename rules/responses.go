@@ -111,6 +111,29 @@ func (k KickUserResponse) Execute(p provider.Provider, event provider.Event) boo
 	return p.KickUser(userID, channelID)
 }
 
+// Revoke all active sessions for a user
+
+func NewRevokeUserActiveSessionsResponse(userID string) (*RevokeUserActiveSessionsResponse, error) {
+	return &RevokeUserActiveSessionsResponse{userID}, nil
+}
+
+type RevokeUserActiveSessionsResponse struct {
+	UserID string
+}
+
+func (r RevokeUserActiveSessionsResponse) Execute(p provider.Provider, event provider.Event) bool {
+	userID := ""
+
+	if r.UserID == "" {
+		userID = event.UserID
+	} else {
+		userID = r.UserID
+	}
+
+	log.Printf("[+] Executing 'RevokeUserActiveSessions' | All sessions revoked for user: %s\n", event.UserName)
+	return p.RevokeUserActiveSessions(userID)
+}
+
 func NewDeleteMessageResponse() (*DeleteMessageResponse, error) {
 	return &DeleteMessageResponse{}, nil
 }

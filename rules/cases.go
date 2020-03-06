@@ -128,6 +128,8 @@ func createResponseFromRawResponse(rawResp rawResponse) (Response, error) {
 		realResponse, err = NewInviteUserResponse(rawResp.Channel, rawResp.User)
 	case "kick_user":
 		realResponse, err = NewKickUserResponse(rawResp.Channel, rawResp.User)
+	case "revoke_user_sessions":
+		realResponse, err = NewRevokeUserActiveSessionsResponse(rawResp.User)
 	case "delete_message":
 		realResponse, err = NewDeleteMessageResponse()
 	default:
