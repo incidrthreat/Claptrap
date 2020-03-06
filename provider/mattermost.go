@@ -243,6 +243,12 @@ func (m *Mattermost) KickUser(userID, channelID string) bool {
 	return true
 }
 
+// RevokeAllActiveUserSessions revokes all active sessions for a user on every device
+func (m *Mattermost) RevokeUserActiveSessions(userID string) bool {
+	m.client.RevokeAllSessions(userID)
+	return true
+}
+
 func (m *Mattermost) DeleteMessage(event Event) bool {
 	m.client.DeletePost(event.PostID)
 	return true
