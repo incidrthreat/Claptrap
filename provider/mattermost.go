@@ -249,6 +249,17 @@ func (m *Mattermost) RevokeUserActiveSessions(userID string) bool {
 	return true
 }
 
+func (m *Mattermost) UpdateUserMessage(postID, message string) bool {
+	post := &model.Post{
+		Id:      postID,
+		Message: message,
+	}
+	p, r := m.client.UpdatePost(postID, post)
+	log.Println(p)
+	log.Println(r)
+	return true
+}
+
 func (m *Mattermost) DeleteMessage(event Event) bool {
 	m.client.DeletePost(event.PostID)
 	return true
