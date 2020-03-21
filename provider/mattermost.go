@@ -254,9 +254,7 @@ func (m *Mattermost) UpdateUserMessage(postID, message string) bool {
 		Id:      postID,
 		Message: message,
 	}
-	p, r := m.client.UpdatePost(postID, post)
-	log.Println(p)
-	log.Println(r)
+	m.client.UpdatePost(postID, post)
 	return true
 }
 
